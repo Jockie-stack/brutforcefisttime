@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Atelier</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .dashboard-card {
+      text-align: center;
+    }
+    .welcome {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .welcome-sub {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 36px;
+    }
+    .user-info {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 20px 24px;
+      text-align: left;
+      margin-bottom: 28px;
+    }
+    .user-info p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .user-info p strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--accent-dim);
+      border: 1px solid rgba(232,201,126,0.25);
+      color: var(--accent);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 2px;
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card dashboard-card">
+  <div class="logo" style="justify-content:center;margin-bottom:24px"><span></span> Atelier</div>
+  <div class="badge">✓ Connecté</div>
+  <div class="welcome" id="welcome-name">Bonjour !</div>
+  <p class="welcome-sub">Vous êtes bien connecté à votre espace.</p>
+
+  <div class="user-info">
+    <p>Nom : <strong id="info-name">—</strong></p>
+    <p>Email : <strong id="info-email">—</strong></p>
+    <p style="margin-bottom:0">ID : <strong id="info-id">—</strong></p>
+  </div>
+
+  <button class="btn" onclick="handleSignOut()">Se déconnecter</button>
+</div>
+
+<script>
+  // Charger les infos de la session
+  fetch('/api/me')
+    .then(r => r.json())
+    .then(data => {
+      if (!data.user) return window.location.href = '/';
+      document.getElementById('welcome-name').textContent = 'Bonjour, ' + data.user.name + ' !';
+      document.getElementById('info-name').textContent    = data.user.name;
+      document.getElementById('info-email').textContent   = data.user.email;
+      document.getElementById('info-id').textContent      = data.user.id;
+    })
+    .catch(() => window.location.href = '/');
+
+  function handleSignOut() {
+    fetch('/api/signout', { method: 'POST' })
+      .then(() => window.location.href = '/');
+  }
+</script>
+</body>
+</html>
